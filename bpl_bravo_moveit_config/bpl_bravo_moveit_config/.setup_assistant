@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: bpl_bravo_description_real
+    relative_path: urdf/bravo_7_example.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/bravo_7_example.srdf
+  CONFIG:
+    author_name: Tim Player
+    author_email: playert@oregonstate.edu
+    generated_timestamp: 1660330415

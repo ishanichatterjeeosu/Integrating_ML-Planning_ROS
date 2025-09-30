@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="testbed_gazebo" params="namespace">
+
+        <!-- Disable gravity for all links -->
+        <gazebo reference="${namespace}/world_link_x">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+        <gazebo reference="${namespace}/world_link_y">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+        <gazebo reference="${namespace}/world_link_z">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+        <gazebo reference="${namespace}/world_link_yaw">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+        <gazebo reference="${namespace}/base_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <transmission name="trans_corexy_x">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="corexy_x">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="corexy_x_motor">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_corexy_y">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="corexy_y">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="corexy_y_motor">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_z_axis">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="z_axis">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="z_axis_motor">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_yaw">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="yaw">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="yaw_motor">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <gazebo>
+            <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+                <!-- <robotNamespace>/testbed</robotNamespace>  -->
+                <!-- TODO: Check if robot namespace here makes sense -->
+                <!-- <robotParam>/robot_description</robotParam> -->
+            </plugin>
+        </gazebo>
+
+  <!-- <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/$(arg namespace)</robotNamespace>
+        <robotParam>/$(arg namespace)/robot_description</robotParam>
+      </plugin>
+  </gazebo> -->
+
+    </xacro:macro>
+</robot>

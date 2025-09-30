@@ -1,0 +1,31 @@
+axis_linear: 
+  x: 1  # Left thumb stick vertical
+  y: 0  # left thumb stick horizontal
+  z: 7  # D pad vertical
+scale_linear:
+  x: 0.5
+  y: -0.5
+  z: 0.2
+scale_linear_turbo:
+  x: 1.0
+  y: -1.0
+  z: 0.8
+
+axis_angular: 
+  pitch: 4 # right thumb stick vertical
+  yaw: 3 # right thumb stick horizontal
+  roll: 6 # D pad horizontal
+scale_angular:
+  pitch: 2
+  yaw: -2
+  roll: 2
+scale_angular_turbo:
+  pitch: 4.0
+  yaw: -4.0
+  roll: 4.0
+
+enable_button: 4 # Left bumper
+enable_turbo_button: 5  # Right bumper
+
+open_jaw: 2 # left trigger
+close_jaw: 5 # right trigger

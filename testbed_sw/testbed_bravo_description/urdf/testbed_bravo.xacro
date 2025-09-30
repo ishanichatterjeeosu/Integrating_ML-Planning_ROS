@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<robot name="testbed_bravo" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Parameters -->
+  <xacro:property name="namespace" value="testbed"/>
+  <xacro:property name="visual_mesh_file" value="file://$(find testbed_description)/meshes/triangle.stl"/>
+
+  <!-- Mass -->
+  <xacro:property name="mass" value="1.0"/>
+
+  <!-- Vehicle ~ 0.6096 m (2ft) x 0.4445 (17.5in) x 0.4572 (18in) used for inertial properties-->
+  <xacro:property name="length" value="0.625"/>
+  <xacro:property name="width" value="0.4445"/> 
+  <xacro:property name="height" value="0.4572"/>
+
+  <!-- Import testbed xacro -->
+  <xacro:include filename="$(find testbed_description)/urdf/testbed_macro.xacro" />
+  <xacro:include filename="$(find testbed_description)/urdf/testbed.gazebo.xacro" />
+
+  <!-- Import bravo arm xacro -->
+  <xacro:include filename="$(find bpl_bravo_description_real)/urdf/bravo_7.urdf.xacro" />
+  <xacro:include filename="$(find bpl_bravo_description_real)/urdf/bravo_7.gazebo.xacro" />
+
+  <!-- bravo arm properties -->
+  <xacro:arg name="with_camera" default="false" />
+  <xacro:arg name="with_force_torque_sensor" default="false" />
+
+
+  <!-- Virtual world link -->
+  <link name="world" />
+  <xacro:property name="parent" default="world"/>
+
+
+  <!-- Build the testbed using the macro -->
+  <xacro:testbed namespace="${namespace}" parent="${parent}" mass="${mass}" length="${length}" width="${width}" height="${height}" meshfile="${visual_mesh_file}"/>
+  <xacro:testbed_gazebo namespace="${namespace}"/>
+
+  <!-- Build the arm using macro -->
+  <xacro:property name="jaw_yaw_offset" value="0.6" />
+  <xacro:bravo_7 parent="${namespace}/base_link" name="bravo" jaw_yaw_offset="${jaw_yaw_offset}" with_force_torque_sensor="$(arg with_force_torque_sensor)">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:bravo_7>
+  <xacro:bravo_gazebo name="bravo" />
+
+</robot>

@@ -1,0 +1,108 @@
+testbed:
+    # Publish all joint states
+    joint_states:
+        type: joint_state_controller/JointStateController
+        publish_rate: 10
+
+    # Position controller is actually a ROS-space PID loop around velocity control
+    x_position_controller:
+        type: velocity_controllers/JointPositionController
+        joint: corexy_x
+        pid:
+            p: 1
+            i: 0
+            d: 0
+
+    x_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: corexy_x
+
+    y_position_controller:
+        type: velocity_controllers/JointPositionController
+        joint: corexy_y
+        pid:
+            p: 1
+            i: 0
+            d: 0
+
+    y_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: corexy_y
+
+    yaw_position_controller:
+        type: position_controllers/JointPositionController
+        joint:  yaw
+
+    yaw_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: yaw
+
+    # Joint trajectory controller for MoveIt!
+    testbed_controller:
+        type: velocity_controllers/JointTrajectoryController
+        joints:
+            - corexy_x
+            - corexy_y
+            - yaw
+            - z_axis
+        gains: # Required because we're controlling a velocity interface
+            corexy_x: {p: 1, d: 0, i: 0, i_clamp: 1}
+            corexy_y: {p: 1, d: 0, i: 0, i_clamp: 1}
+            yaw: {p: 1, d: 0, i: 0, i_clamp: 1}
+            z_axis: {p: 1, d: 0, i: 0, i_clamp: 1}
+        velocity_ff:
+            yaw: 0.0
+        constraints:
+            # vel_tolerance is 0 for due to the movegroup/follow_joint_trajectory/goal tolerance is empty
+            # This reduces the number of falsely reported "failed plan execution"
+            # even though the plan execution looked perfectly fine.
+            # https://answers.ros.org/question/312123/goal_tolerance_violated-gazebomoveit/
+            stopped_velocity_tolerance: 0
+
+bravo:
+  # Publish joint states
+  joint_state_controller:
+      type: joint_state_controller/JointStateController
+      publish_rate: 100
+
+  hand_position_controller:
+    type: effort_controllers/JointTrajectoryController
+    # We simulate an EffortController with independently actuated fingers,
+    # instead of a PositionController with a shared axis_a linear actuator,
+    # for compatibility with Gazebo.
+    joints:
+      - bravo_axis_a
+    gains:
+      bravo_axis_a: {p: 5000, d: 5, i: 0.0, i_clamp: 200, anti-windup: true}
+    constraints:
+        stopped_velocity_tolerance: 0.05
+        bravo_axis_a: {trajectory: 0.1, goal: 0.1}
+        goal_time: 0.6
+    state_publish_rate: 100
+
+  arm_controller:
+    type: effort_controllers/JointTrajectoryController
+    joints:
+      - bravo_axis_g
+      - bravo_axis_f
+      - bravo_axis_e
+      - bravo_axis_d
+      - bravo_axis_c
+      - bravo_axis_b
+    gains:
+      bravo_axis_g: { p: 10000, d: 20, i: 0.0, i_clamp: 10 }
+      bravo_axis_f: { p: 10000, d: 20, i: 0.0, i_clamp: 10 }
+      bravo_axis_e: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_c: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_b: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_d: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+    constraints:
+        stopped_velocity_tolerance: 0.05
+        bravo_axis_g: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_f: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_e: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_d: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_c: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_b: {trajectory: 0.1, goal: 0.1}
+        goal_time: 0.6
+    state_publish_rate: 100

@@ -1,0 +1,34 @@
+kind: pipeline
+type: docker
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+## Build the non-ROS components with cmake+make
+## Don't have non-Catkin configuration in the CMakeLists.txt
+#- name: build
+#  image: amarburg/drone-ci-ros-noetic:latest
+#  commands:
+#    - mkdir -p .build-drone && cd .build-drone && cmake .. && make
+
+## Build in 20.04 / noetic with bplprotocol installed
+- name: build-20-04-with-bplprotocol
+  image: amarburg/drone-ci-ros-noetic:latest
+  commands:
+    - if [ ! -d Blueprint_Lab_Software ]; then git clone https://github.com/blueprint-lab/Blueprint_Lab_Software.git; fi
+    - cd Blueprint_Lab_Software/bplprotocol && pip install -e . && cd ../..
+    - wget -O- https://gitlab.com/amarburg/ros_drone_ci/-/raw/master/bootstrap.sh | /bin/bash
+  environment:
+    WSTOOL_RECURSIVE: true
+
+## And test without bplprotocol installed
+- name: build-20-04
+  image: amarburg/drone-ci-ros-noetic:latest
+  commands:
+    - wget -O- https://gitlab.com/amarburg/ros_drone_ci/-/raw/master/bootstrap.sh | /bin/bash
+  environment:
+    WSTOOL_RECURSIVE: true
+

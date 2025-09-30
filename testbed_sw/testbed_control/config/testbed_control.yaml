@@ -1,0 +1,61 @@
+# testbed:
+
+# Publish all joint states
+joint_states:
+    type: joint_state_controller/JointStateController
+    publish_rate: 10
+
+# Position controller is actually a ROS-space PID loop around velocity control
+x_position_controller:
+    type: velocity_controllers/JointPositionController
+    joint: corexy_x
+    pid:
+        p: 1
+        i: 0
+        d: 0
+
+x_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: corexy_x
+
+y_position_controller:
+    type: velocity_controllers/JointPositionController
+    joint: corexy_y
+    pid:
+        p: 1
+        i: 0
+        d: 0
+
+y_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: corexy_y
+
+yaw_position_controller:
+    type: position_controllers/JointPositionController
+    joint:  yaw
+
+yaw_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: yaw
+
+# Joint trajectory controller for MoveIt!
+joint_trajectory_controller:
+    type: velocity_controllers/JointTrajectoryController
+    joints:
+        - corexy_x
+        - corexy_y
+        - yaw
+        - z_axis
+    gains: # Required because we're controlling a velocity interface
+        corexy_x: {p: 1, d: 0, i: 0, i_clamp: 1}
+        corexy_y: {p: 1, d: 0, i: 0, i_clamp: 1}
+        yaw: {p: 1, d: 0, i: 0, i_clamp: 1}
+        z_axis: {p: 1, d: 0, i: 0, i_clamp: 1}
+    velocity_ff:
+        yaw: 0.0
+    constraints:
+        # vel_tolerance is 0 for due to the movegroup/follow_joint_trajectory/goal tolerance is empty
+        # This reduces the number of falsely reported "failed plan execution"
+        # even though the plan execution looked perfectly fine.
+        # https://answers.ros.org/question/312123/goal_tolerance_violated-gazebomoveit/
+        stopped_velocity_tolerance: 0

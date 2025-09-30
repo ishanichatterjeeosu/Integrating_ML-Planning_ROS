@@ -1,0 +1,18 @@
+<package>
+
+  <name>rsa_bravo_gazebo</name>
+  <version>0.3.0</version>
+  <description>
+    Gazebo config for Bravo arm.
+  </description>
+  <author email="playert@oregonstate.edu">Tim Player</author>
+  <maintainer email="playert@oregonstate.edu">Tim Player</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>joint_trajectory_controller</run_depend>
+  <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>roboticsgroup_upatras_gazebo_plugins</run_depend>
+</package>

@@ -1,0 +1,25 @@
+<launch>
+  <arg name="model" default="$(find testbed_bravo_description)/urdf/testbed_bravo.xacro"/>
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find testbed_bravo_description)/rviz/testbed.rviz" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+  <!-- Set default joint angles for the bravo arm -->
+  <rosparam>
+  zeros:
+    bravo_axis_b: 1.9950388808824293
+    bravo_axis_c: 1.4678582805893576
+    bravo_axis_d: 0.5450578589117114
+    bravo_axis_e: 1.418630073444958
+    bravo_axis_f: 2.850500116348798
+    bravo_axis_g: 2.3335753665456362
+  </rosparam>
+  
+
+  <node if="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+  <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+</launch>

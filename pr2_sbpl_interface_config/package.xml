@@ -1,0 +1,10 @@
+<package format="2">
+    <name>pr2_sbpl_interface_config</name>
+    <version>0.0.0</version>
+    <description>The pr2_sbpl_interface_config package</description>
+    <author email="andrew.dornbush@gmail.com">Andrew Dornbush</author>
+    <maintainer email="andrew.dornbush@gmail.com">Andrew Dornbush</maintainer>
+    <license>BSD</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+</package>

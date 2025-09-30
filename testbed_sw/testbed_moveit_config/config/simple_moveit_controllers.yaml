@@ -1,0 +1,10 @@
+controller_list:
+  - name: testbed/testbed_controller #TODO: Hardcoded namespace here
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: True
+    joints:
+      - corexy_x
+      - corexy_y
+      - z_axis
+      - yaw

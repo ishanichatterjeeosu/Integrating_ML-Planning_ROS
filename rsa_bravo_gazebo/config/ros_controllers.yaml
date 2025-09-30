@@ -1,0 +1,47 @@
+bravo:
+  # Publish joint states
+  joint_state_controller:
+      type: joint_state_controller/JointStateController
+      publish_rate: 100
+
+  hand_position_controller:
+    type: effort_controllers/JointTrajectoryController
+    # We simulate an EffortController with independently actuated fingers,
+    # instead of a PositionController with a shared axis_a linear actuator,
+    # for compatibility with Gazebo.
+    joints:
+      - bravo_axis_a
+    gains:
+      bravo_axis_a: {p: 5000, d: 5, i: 0.0, i_clamp: 200, anti-windup: true}
+    constraints:
+        stopped_velocity_tolerance: 0.05
+        bravo_axis_a: {trajectory: 0.1, goal: 0.1}
+        goal_time: 0.6
+    state_publish_rate: 100
+
+  arm_position_controller:
+    type: effort_controllers/JointTrajectoryController
+    joints:
+      - bravo_axis_g
+      - bravo_axis_f
+      - bravo_axis_e
+      - bravo_axis_d
+      - bravo_axis_c
+      - bravo_axis_b
+    gains:
+      bravo_axis_g: { p: 10000, d: 20, i: 0.0, i_clamp: 10 }
+      bravo_axis_f: { p: 10000, d: 20, i: 0.0, i_clamp: 10 }
+      bravo_axis_e: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_c: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_b: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_d: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+    constraints:
+        stopped_velocity_tolerance: 0.05
+        bravo_axis_g: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_f: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_e: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_d: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_c: {trajectory: 0.1, goal: 0.1}
+        bravo_axis_b: {trajectory: 0.1, goal: 0.1}
+        goal_time: 0.6
+    state_publish_rate: 100

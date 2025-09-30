@@ -1,0 +1,33 @@
+controller_list:
+  - name: fake_testbed_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - corexy_x
+      - corexy_y
+      - z_axis
+      - yaw
+  - name: fake_bravo_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - bravo_axis_g
+      - bravo_axis_f
+      - bravo_axis_e
+      - bravo_axis_d
+      - bravo_axis_c
+      - bravo_axis_b
+  - name: fake_full_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - corexy_x
+      - corexy_y
+      - z_axis
+      - yaw
+      - bravo_axis_g
+      - bravo_axis_f
+      - bravo_axis_e
+      - bravo_axis_d
+      - bravo_axis_c
+      - bravo_axis_b
+initial:  # Define initial robot poses per group
+  - group: full
+    pose: start

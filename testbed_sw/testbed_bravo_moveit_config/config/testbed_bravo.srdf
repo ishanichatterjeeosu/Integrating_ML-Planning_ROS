@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="testbed_bravo">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="testbed">
+        <joint name="corexy_x"/>
+        <joint name="corexy_y"/>
+        <joint name="z_axis"/>
+        <joint name="yaw"/>
+    </group>
+    <group name="bravo">
+        <joint name="bravo_axis_g"/>
+        <joint name="bravo_axis_f"/>
+        <joint name="bravo_axis_e"/>
+        <joint name="bravo_axis_d"/>
+        <joint name="bravo_axis_c"/>
+        <joint name="bravo_axis_b"/>
+    </group>
+    <group name="full">
+        <joint name="corexy_x"/>
+        <joint name="corexy_y"/>
+        <joint name="z_axis"/>
+        <joint name="yaw"/>
+        <joint name="bravo_joint"/>
+        <joint name="bravo_axis_g"/>
+        <joint name="bravo_axis_f"/>
+        <joint name="bravo_axis_e"/>
+        <joint name="bravo_axis_d"/>
+        <joint name="bravo_axis_c"/>
+        <joint name="bravo_axis_b"/>
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="start" group="full">
+        <joint name="bravo_axis_b" value="0"/>
+        <joint name="bravo_axis_c" value="0.6766"/>
+        <joint name="bravo_axis_d" value="3.0829"/>
+        <joint name="bravo_axis_e" value="1.3358"/>
+        <joint name="bravo_axis_f" value="1.8215"/>
+        <joint name="bravo_axis_g" value="2.9116"/>
+        <joint name="corexy_x" value="0"/>
+        <joint name="corexy_y" value="0"/>
+        <joint name="yaw" value="0"/>
+        <joint name="z_axis" value="0"/>
+    </group_state>
+    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="bravo_finger_jaws_rs2_300_joint"/>
+    <passive_joint name="bravo_finger_jaws_rs2_301_joint"/>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="bravo_1013_joint_link" link2="bravo_1019_end_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1013_joint_link" link2="bravo_1023_0_joint_link" reason="Default"/>
+    <disable_collisions link1="bravo_1013_joint_link" link2="bravo_1023_1_joint_link" reason="Default"/>
+    <disable_collisions link1="bravo_1013_joint_link" link2="bravo_1026_0_joint_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1013_joint_link" link2="bravo_1026_1_joint_link" reason="Default"/>
+    <disable_collisions link1="bravo_1013_joint_link" link2="bravo_base_link" reason="Default"/>
+    <disable_collisions link1="bravo_1013_joint_link" link2="testbed/base_link" reason="Default"/>
+    <disable_collisions link1="bravo_1019_end_link" link2="bravo_1026_0_joint_link" reason="Never"/>
+    <disable_collisions link1="bravo_1019_end_link" link2="bravo_1026_1_joint_link" reason="Never"/>
+    <disable_collisions link1="bravo_1019_end_link" link2="bravo_base_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1019_end_link" link2="testbed/base_link" reason="Never"/>
+    <disable_collisions link1="bravo_1023_0_joint_link" link2="bravo_1023_1_joint_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1023_0_joint_link" link2="bravo_1026_0_joint_link" reason="Never"/>
+    <disable_collisions link1="bravo_1023_0_joint_link" link2="bravo_1026_1_joint_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1023_0_joint_link" link2="bravo_finger_jaws_rs2_300_link" reason="Never"/>
+    <disable_collisions link1="bravo_1023_0_joint_link" link2="bravo_finger_jaws_rs2_301_link" reason="Never"/>
+    <disable_collisions link1="bravo_1023_0_joint_link" link2="testbed/base_link" reason="Default"/>
+    <disable_collisions link1="bravo_1023_1_joint_link" link2="bravo_1026_0_joint_link" reason="Never"/>
+    <disable_collisions link1="bravo_1023_1_joint_link" link2="bravo_1026_1_joint_link" reason="Never"/>
+    <disable_collisions link1="bravo_1023_1_joint_link" link2="bravo_finger_jaws_rs2_300_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1023_1_joint_link" link2="bravo_finger_jaws_rs2_301_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1026_0_joint_link" link2="bravo_1026_1_joint_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_1026_0_joint_link" link2="bravo_base_link" reason="Never"/>
+    <disable_collisions link1="bravo_1026_0_joint_link" link2="bravo_finger_jaws_rs2_300_link" reason="Never"/>
+    <disable_collisions link1="bravo_1026_0_joint_link" link2="bravo_finger_jaws_rs2_301_link" reason="Never"/>
+    <disable_collisions link1="bravo_1026_1_joint_link" link2="bravo_base_link" reason="Default"/>
+    <disable_collisions link1="bravo_1026_1_joint_link" link2="bravo_finger_jaws_rs2_300_link" reason="Never"/>
+    <disable_collisions link1="bravo_1026_1_joint_link" link2="bravo_finger_jaws_rs2_301_link" reason="Never"/>
+    <disable_collisions link1="bravo_1026_1_joint_link" link2="testbed/base_link" reason="Default"/>
+    <disable_collisions link1="bravo_base_link" link2="testbed/base_link" reason="Adjacent"/>
+    <disable_collisions link1="bravo_finger_jaws_rs2_300_link" link2="bravo_finger_jaws_rs2_301_link" reason="Never"/>
+</robot>

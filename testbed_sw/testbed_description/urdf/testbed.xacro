@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<robot name="testbed" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Parameters -->
+  <xacro:property name="namespace" value="testbed"/>
+  <xacro:property name="visual_mesh_file" value="file://$(find testbed_description)/meshes/triangle.stl"/>
+
+  <!-- Mass -->
+  <xacro:property name="mass" value="1.0"/>
+
+  <!-- Vehicle ~ 0.6096 m (2ft) x 0.4445 (17.5in) x 0.4572 (18in) used for inertial properties-->
+  <xacro:property name="length" value="0.625"/>
+  <xacro:property name="width" value="0.4445"/> 
+  <xacro:property name="height" value="0.4572"/>
+
+  <!-- Virtual world link to connect to testbed -->
+  <link name="world" />
+  <xacro:property name="parent" value="world"/>
+
+  <!-- Macro to create the testbed -->
+  <xacro:include filename="$(find testbed_description)/urdf/testbed_macro.xacro" />
+  <xacro:testbed namespace="${namespace}" parent="${parent}" mass="${mass}" length="${length}" width="${width}" height="${height}" meshfile="${visual_mesh_file}"/>
+
+  <!-- Macro to instantiate gazebo parameters for testbed -->
+  <xacro:include filename="$(find testbed_description)/urdf/testbed.gazebo.xacro" />
+  <xacro:testbed_gazebo namespace="${namespace}"/>
+
+  <!-- Joint state publisher plugin -->
+  <!-- <xacro:default_joint_state_publisher namespace="${namespace}" update_rate="50"/> -->
+</robot>

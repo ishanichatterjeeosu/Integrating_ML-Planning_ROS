@@ -1,0 +1,33 @@
+hardware_interface:
+  joints:
+    - bravo_axis_g
+    - bravo_axis_f
+    - bravo_axis_e
+    - bravo_axis_d
+    - bravo_axis_c
+    - bravo_axis_b
+    - bravo_axis_a
+  sim_control_mode: 1  # 0: position, 1: velocity
+
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+controller_list:
+  - name: arm_position_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - bravo_axis_g
+      - bravo_axis_f
+      - bravo_axis_e
+      - bravo_axis_d
+      - bravo_axis_c
+      - bravo_axis_b
+  - name: hand_position_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - bravo_axis_a

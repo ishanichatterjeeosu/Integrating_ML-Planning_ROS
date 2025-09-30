@@ -1,0 +1,36 @@
+bravo:
+  # Settings for ros_control hardware interface
+  hardware_interface:
+      joints:
+      - bravo_axis_a
+      - bravo_axis_b
+      - bravo_axis_c
+      - bravo_axis_d
+      - bravo_axis_e
+      - bravo_axis_f
+      - bravo_axis_g
+
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100
+
+  arm_position_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+      - bravo_axis_b
+      - bravo_axis_c
+      - bravo_axis_d
+      - bravo_axis_e
+      - bravo_axis_f
+      - bravo_axis_g
+
+    # keep default "constraints" item
+
+    state_publish_rate: 100
+
+  hand_position_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+      - bravo_axis_a
+    state_publish_rate: 100

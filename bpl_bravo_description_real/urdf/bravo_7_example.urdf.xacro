@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<robot name="bravo_7_example" xmlns:xacro="http://ros.org/wiki/xacro">
+
+        <!-- Trolley Dimensions Defined in testbed_macros-->
+    <xacro:property name="trolley_x" value="0.34" />
+    <xacro:property name="trolley_y" value="0.51" />
+    <xacro:property name="trolley_z" value="0.70" />
+
+    <xacro:arg name="x" default="0" />
+    <xacro:arg name="y" default="0" />
+    <xacro:arg name="z" default="${(trolley_z / 2) - 0.11 + 0.16 } " />
+    <xacro:arg name="yaw" default="0" />
+
+    <xacro:arg name="with_camera" default="false" />
+    <xacro:arg name="with_trisect" default="true" />
+    <xacro:arg name="with_force_torque_sensor" default="true" />
+
+    <xacro:include filename="$(find bpl_bravo_description_real)/urdf/bravo_7.urdf.xacro" />
+    <xacro:include filename="$(find bpl_bravo_description_real)/urdf/bravo_7.gazebo.xacro" />
+
+    <xacro:include filename="$(find bpl_bravo_description_real)/urdf/testbed_macros.xacro" />
+
+
+    <!-- Need to add mass to these imaginary links for gazebo to see them -->
+    <xacro:property name="mass_empty" value="0.1" />
+
+    <link name="world">
+    </link>
+
+    <link name="world_link_x">
+        <inertial>
+            <mass value="${mass_empty}" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0" ixy="0" ixz="0"
+                    iyy="0" iyz="0"
+                    izz="0" />
+        </inertial>
+    </link>
+
+    <link name="world_link_y">
+        <inertial>
+            <mass value="${mass_empty}" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0" ixy="0" ixz="0"
+                    iyy="0" iyz="0"
+                    izz="0" />
+        </inertial>
+    </link>
+
+    <link name="world_link_z">
+        <inertial>
+            <mass value="${mass_empty}" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0" ixy="0" ixz="0"
+                    iyy="0" iyz="0"
+                    izz="0" />
+        </inertial>
+    </link>
+
+    <link name="world_link_yaw">
+        <inertial>
+            <mass value="${mass_empty}" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0" ixy="0" ixz="0"
+                    iyy="0" iyz="0"
+                    izz="0" />
+            </inertial>
+    </link>
+
+    <joint name="corexy_x" type="fixed">
+      <parent link="world"/>
+      <child link="world_link_x"/>
+      <origin xyz="$(arg x) 0 0" rpy="0 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="255" velocity="1.6" lower="-1" upper="1" /> 
+      <!-- Assume we are operating in 2x2x1m cube-->
+    </joint>
+
+    <joint name="corexy_y" type="fixed">
+      <parent link="world_link_x"/>
+      <child link="world_link_y"/>
+      <origin xyz="0 $(arg y) 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="255" velocity="1.6" lower="-1" upper="1" /> 
+      <!-- Assume we are operating in 2x2x1m cube-->
+    </joint>
+
+    <joint name="z_axis" type="fixed">
+      <parent link="world_link_y"/>
+      <child link="world_link_z"/>
+      <origin xyz="0 0 $(arg z)" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="255" velocity="1.6" lower="-0.5" upper="0.5" /> 
+      <!-- Assume we are operating in 2x2x1m cube-->
+    </joint>
+
+    <joint name="yaw" type="fixed">
+      <parent link="world_link_z"/>
+      <child link="world_link_yaw"/>
+      <origin xyz="0 0 0" rpy="0 0 $(arg yaw)"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="255" velocity="${pi/2}" lower="-${pi}" upper="${pi}" /> 
+      <!-- Assume we have no limit on yaw-->
+    </joint>
+
+    <!-- TODO: Check Backboard size -->
+    <link name="backboard">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="1"/>
+            <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+        </inertial>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0 " />
+            <geometry>
+                <box size="${trolley_x} ${trolley_y} ${trolley_z}" /> 
+            </geometry>
+        </collision>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0 " />
+            <geometry>
+                <box size="${trolley_x} ${trolley_y} ${trolley_z}" /> 
+            </geometry>
+            <material name="Black">
+                <color rgba="0.0 0.0 0.0 0.5"/>
+            </material>
+        </visual>
+    </link>
+
+    <!-- TODO: Change to floating joint relative to testbed -->
+    <joint name="world_backboard_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="world_link_yaw"/>
+        <child link="backboard"/>
+    </joint>
+
+    <!-- 
+    The jaws may not align with the 1028_base_link, depending on how they were
+    installed. To calibrate this extra roll about the wrist axis, use the
+    jaw_yaw_offset property. 
+    -->
+    <!-- TODO: verify offset -->
+    <xacro:property name="jaw_yaw_offset" value="0.6" />
+    <xacro:bravo_7 parent="backboard" name="bravo" jaw_yaw_offset="${jaw_yaw_offset}" with_force_torque_sensor="$(arg with_force_torque_sensor)">
+        <origin xyz="${trolley_x/2} ${-trolley_y/2 + 0.10} ${-trolley_z/2 + 0.11}" rpy="0 0 0" />
+    </xacro:bravo_7>
+    <xacro:bravo_gazebo name="bravo" />
+
+    <xacro:if value="$(arg with_camera)">
+
+        <!-- include depth camera -->
+        <xacro:include filename="$(find bpl_bravo_description_real)/urdf/depth_cam.urdf.xacro" />
+
+        <!--
+        The depth camera is mounted parallel to the jaws on the wrist, but is
+        measured from a frame coincident with bravo_1028_base_link. So we add a
+        virtual link to account for the jaw_yaw_offset roll calibration, with the
+        same origin but a slight roll.
+        -->
+        <link name="depth_cam_measurement_link" />
+        <joint name="jaw_offset_frame" type="fixed">
+            <parent link="bravo_1023_1_joint_link" />
+            <child link="depth_cam_measurement_link" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+        </joint>
+
+        <joint name="depth_cam_measurement" type="fixed">
+            <parent link="depth_cam_measurement_link" />
+            <child link="depth_cam_link" />
+            <origin xyz="-0.006 -0.078 0.070" rpy="1.5708 -1.5708 0" />
+        </joint>
+    </xacro:if>
+
+    <xacro:if value="$(arg with_trisect)">
+
+        <!-- include depth camera -->
+        <xacro:include filename="$(find bpl_bravo_description_real)/urdf/trisect_cam.urdf.xacro" />
+
+        <joint name="backboard_trisect_joint" type="fixed">
+            <parent link="backboard" />
+            <child link="trisect_cam_link" />
+            <origin xyz="${trolley_x/2} ${trolley_y/2.0 - trisect_size_y/2.0} 0" rpy="0 0 0" />
+        </joint>
+
+    </xacro:if>
+
+</robot>

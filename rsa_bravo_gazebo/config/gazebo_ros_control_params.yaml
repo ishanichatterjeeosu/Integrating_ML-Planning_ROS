@@ -1,0 +1,9 @@
+bravo:
+gazebo_ros_control:
+  pid_gains:
+      bravo_axis_g: { p: 10000, d: 20, i: 0.0, i_clamp: 10}
+      bravo_axis_f: { p: 10000, d: 20, i: 0.0, i_clamp: 10 }
+      bravo_axis_e: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_c: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_b: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }
+      bravo_axis_d: { p: 1000, d: 2, i: 0.0, i_clamp: 10 }

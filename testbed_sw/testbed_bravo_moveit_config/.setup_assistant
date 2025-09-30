@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: testbed_bravo_description
+    relative_path: urdf/testbed_bravo.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/testbed_bravo.srdf
+  CONFIG:
+    author_name: Scott Chow
+    author_email: chows@oregonstate.edu
+    generated_timestamp: 1657931025

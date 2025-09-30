@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<robot name="testbed" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!-- Fun conversion factors -->
+<xacro:property name="in_to_m" value="0.0254" />
+<xacro:property name="ft_to_m" value="0.3048" />
+
+<!-- Pillar Dimensions -->
+<xacro:property name="pillar_x" value="0.3" />
+<xacro:property name="pillar_y" value="0.3" />
+<xacro:property name="pillar_z" value="${4*ft_to_m}" />
+
+<!-- TODO: Check actual length width depth of testbed -->
+<xacro:property name="testbed_x" value="${6*ft_to_m}" />
+<xacro:property name="testbed_y" value="${6*ft_to_m}" />
+<xacro:property name="testbed_x" value="${6*ft_to_m}" />
+
+<!-- Trolley Dimensions -->
+<!-- <xacro:property name="trolley_z_offset" value="0.3" />  -->
+<!-- <xacro:property name="trolley_x" value="0.34" />
+<xacro:property name="trolley_y" value="0.51" />
+<xacro:property name="trolley_z" value="-0.93" /> -->
+
+<!-- x,y,z,rx,ry,rz are Position and orientation 
+     of the center of the pillar relative to the world
+-->
+<xacro:macro name="pillar" params="x y z rx ry rz">
+    <collision>
+        <origin xyz="${x} ${y} ${z}" rpy="${rx} ${ry} ${rz}" />
+        <geometry>
+            <box size="${pillar_x/2} ${pillar_y/2} ${pillar_z/2}" /> 
+        </geometry>
+    </collision>
+    <visual>
+        <origin xyz="${x} ${y} ${z}" rpy="${rx} ${ry} ${rz}" />
+        <geometry>
+            <box size="${pillar_x/2} ${pillar_y/2} ${pillar_z/2}" /> 
+        </geometry>
+        <material name="Black">
+            <color rgba="0.0 0.0 0.0 1.0"/>
+        </material>
+    </visual>
+</xacro:macro>
+
+<!-- The x, y z offset of the plane relative to (0,0,0) of testbed -->
+<xacro:macro name="plane" params="x_offset y_offset z_offset">
+    <collision>
+        <origin xyz="${x_offset} ${y_offset} ${z_offset}" rpy="0 0 0" />
+        <geometry>
+            <box size="${pillar_x/2} ${pillar_y/2} ${pillar_z/2}" /> 
+        </geometry>
+    </collision>
+    <visual>
+        <origin xyz="${x} ${y} ${z}" rpy="${rx} ${ry} ${rz}" />
+        <geometry>
+            <box size="${pillar_x/2} ${pillar_y/2} ${pillar_z/2}" /> 
+        </geometry>
+        <material name="Black">
+            <color rgba="0.0 0.0 0.0 1.0"/>
+        </material>
+    </visual>
+</xacro:macro>
+
+<!-- TODO: Check if having multiple collision and visual tags work
+If it doesn't then we will have to make links for parts of the testbed
+attached to the world with fixed links -->
+<!-- x,y_offset is the offset between the (0,0,z) position of the trolley
+     and the position of bottom left pillar of the testbed
+ -->
+<xacro:macro name="testbed" params="x_offset y_offset">
+
+    <!-- Create the four pillars: assume the top left of the box is 0,0,0 -->
+    <!-- Bottom Left -->
+    <xacro:pillar x="${x_offset}" y="${y_offset}" z="-${pillar_z/2}" rx="0" ry="0" rz="0"/>
+    <!-- Bottom Right -->
+    <xacro:pillar x="${x_offset+testbed_x}" y="${y_offset}" z="-${pillar_z/2}" rx="0" ry="0" rz="0"/>
+    <!-- Top Left -->
+    <xacro:pillar x="${x_offset}" y="${y_offset+testbed_y}" z="-${pillar_z/2}" rx="0" ry="0" rz="0"/>
+    <!-- Top Right -->
+    <xacro:pillar x="${x_offset+testbed_x}" y="${y_offset+testbed_y}" z="-${pillar_z/2}" rx="0" ry="0" rz="0"/>
+
+    <!-- Top Plane -->
+    <xacro:plane x_offset="${testbed_x/2}" y_offset="${testbed_y/2}" z_offset="0"/>
+    <!-- Bottom Plane -->
+    <xacro:plane x_offset="${testbed_x/2}" y_offset="${testbed_y/2}" z_offset="-${pillar_z/2}"/>
+
+</xacro:macro>
+</robot>

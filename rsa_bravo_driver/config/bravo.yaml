@@ -1,0 +1,8 @@
+# Hardware related parameters
+# will be loaded onto the parameter server
+# See the bravo.launch
+bravo:
+  heartbeat_freq: 50 # Hz to read position (cast to uint8 in code)
+  debug:
+    hardware_interface: false
+    base_controller: true

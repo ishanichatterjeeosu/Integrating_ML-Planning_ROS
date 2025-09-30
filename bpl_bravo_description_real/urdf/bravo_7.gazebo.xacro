@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- https://github.com/mintar/mimic_joint_gazebo_tutorial/blob/kinetic/urdf/mimic_joint_gazebo_tutorial.urdf.xacro -->
+    <xacro:macro name="mimic_joint_plugin_gazebo" params="name_prefix parent_joint mimic_joint has_pid:=false multiplier:=1.0 offset:=0 sensitiveness:=0.0 max_effort:=1.0 robot_namespace:=''">
+        <gazebo>
+        <plugin name="${name_prefix}mimic_joint_plugin" filename="libroboticsgroup_upatras_gazebo_mimic_joint_plugin.so">
+            <joint>${parent_joint}</joint>
+            <mimicJoint>${mimic_joint}</mimicJoint>
+            <xacro:if value="${has_pid}">                     <!-- if set to true, PID parameters from "/gazebo_ros_control/pid_gains/${mimic_joint}" are loaded -->
+            <hasPID />
+            </xacro:if>
+            <multiplier>${multiplier}</multiplier>
+            <offset>${offset}</offset>
+            <sensitiveness>${sensitiveness}</sensitiveness>   <!-- if absolute difference between setpoint and process value is below this threshold, do nothing; 0.0 = disable [rad] -->
+            <maxEffort>${max_effort}</maxEffort>              <!-- only taken into account if has_pid:=true [Nm] -->
+            <xacro:unless value="${robot_namespace == ''}">
+            <robotNamespace>${robot_namespace}</robotNamespace>
+            </xacro:unless>
+        </plugin>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="bravo_gazebo" params="name:=${name}_7">
+
+        <!-- Use mimic joint plugin to bring joint-mimicking to Gazebo. -->
+        <xacro:mimic_joint_plugin_gazebo name_prefix="bravo_finger_jaws_rs2_300_joint"
+            parent_joint="bravo_axis_a" mimic_joint="bravo_finger_jaws_rs2_300_joint"
+            has_pid="false" multiplier="32.0" max_effort="400.0" robot_namespace="bravo" />
+
+        <xacro:mimic_joint_plugin_gazebo name_prefix="bravo_finger_jaws_rs2_301_joint"
+            parent_joint="bravo_axis_a" mimic_joint="bravo_finger_jaws_rs2_301_joint"
+            has_pid="false" multiplier="32.0" max_effort="400.0" robot_namespace="bravo"/>
+
+        <!-- axis_g -->
+        <gazebo reference="${name}_axis_g">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- axis_f -->
+        <gazebo reference="${name}_axis_f">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- axis_e -->
+        <gazebo reference="${name}_axis_e">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- axis_d -->
+        <gazebo reference="${name}_axis_d">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- axis_c -->
+        <gazebo reference="${name}_axis_c">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- axis_b -->
+        <gazebo reference="${name}_axis_b">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- axis_a -->
+        <gazebo reference="${name}_axis_a">
+            <implicitSpringDamper>1</implicitSpringDamper>
+        </gazebo>
+
+        <!-- Links (added for all links with collision geometry -->
+        <gazebo reference="${name}_base_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+            <!-- gravity is turned off in all these links because moveit_servo + roscontrol don't have gravity compensation built in. -->
+        </gazebo>
+
+        <gazebo reference="${name}_1019_end_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- 1013_joint_link -->
+        <gazebo reference="${name}_1013_joint_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- 1026_0_joint_link -->
+        <gazebo reference="${name}_1026_0_joint_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- 1026_1_joint_link -->
+        <gazebo reference="${name}_1026_1_joint_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- 1023_0_joint_link -->
+        <gazebo reference="${name}_1023_0_joint_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- 1023_1_joint_link -->
+        <gazebo reference="${name}_1023_1_joint_link">
+            <mu1>0.2</mu1>
+            <mu2>0.2</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <gazebo reference="${name}_push_rod">
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- Finger 1 -->
+        <gazebo reference="bravo_finger_jaws_rs2_300_link">
+            <material>Gazebo/Grey</material>
+            <mu1>100.0</mu1>
+            <mu2>100.0</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- Finger 2 -->
+        <gazebo reference="bravo_finger_jaws_rs2_301_link">
+            <material>Gazebo/Grey</material>
+            <mu1>100.0</mu1>
+            <mu2>100.0</mu2>
+            <turnGravityOff>true</turnGravityOff>
+        </gazebo>
+
+        <!-- Joint Transmissions -->
+        <transmission name="trans_${name}_axis_g">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_g">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_g_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_${name}_axis_f">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_f">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_f_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_${name}_axis_e">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_e">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_e_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_${name}_axis_d">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_d">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_d_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_${name}_axis_c">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_c">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_c_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_${name}_axis_b">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_b">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_b_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+        <transmission name="trans_${name}_axis_a">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}_axis_a">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}_axis_a_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+
+        <gazebo>
+            <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+                <robotNamespace>bravo</robotNamespace>
+                <legacyModeNS>True</legacyModeNS>
+            </plugin>
+        </gazebo>
+
+    </xacro:macro>
+</robot>

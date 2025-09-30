@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<model xmlns:xacro="http://www.ros.org/wiki/xacro" name="trisect">
+
+    <!-- Trisect Size Dimensions-->
+    <xacro:property name="trisect_size_x" value="0.24" />
+    <xacro:property name="trisect_size_y" value="0.23" />
+    <xacro:property name="trisect_size_z" value="0.238" />
+
+    <!-- A box to bound the trisect camera location -->
+    <link name="trisect_cam_link">
+        <pose>0 0 0 0 0 0</pose>
+        <visual>
+            <origin xyz="${trisect_size_x / 2} 0. 0" rpy="0 0 0" />
+            <geometry>
+            <!-- TODO: Check Camera Box Size -->
+                <box size="${trisect_size_x} ${trisect_size_y} ${trisect_size_z} " /> 
+            </geometry>
+            <material name="Orange">
+                <color rgba="0.84 0.246 0.035 1.0" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="${trisect_size_x / 2} 0. 0" rpy="0 0 0" />
+            <geometry>
+            <!-- TODO: Check Camera Box Size -->
+                <box size="${trisect_size_x} ${trisect_size_y} ${trisect_size_z} " /> 
+            </geometry>
+            </collision>
+    </link>
+
+  <!-- camera pose transform obtained from hacky_utils/calibrate_trisect_realsense.launch -->
+  <link name="left" />
+  <joint name="trisect_cam_to_left" type="fixed">
+    <parent link="trisect_cam_link"/>
+    <child link="left"/>
+    <origin rpy="-2.322 0 -1.599" xyz="0.117 0 -0.027 "/>
+  </joint>
+
+  <!-- workaround for rotated kinect output -->
+  <!-- https://answers.gazebosim.org/question/4266/gazebo-15-libgazebo_openni_kinectso-pointcloud-data-is-rotated-and-flipped/?answer=26388#post-id-26388 -->
+
+  <link name="kinect_link" />
+  <joint name="left_to_kinect_optical_link" type="fixed">
+    <parent link="left"/>
+    <child link="kinect_link"/>
+    <origin rpy="0 -1.5708 0"/>
+  </joint>
+
+  <link name="kinect_optical_link" />
+  <joint name="kinect_link_to_kinect_optical_link" type="fixed">
+    <parent link="kinect_link"/>
+    <child link="kinect_optical_link"/>
+    <origin rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+  <gazebo reference="kinect_link">
+    <static>1</static>
+    <sensor name="camera" type="depth">
+      <updateRate>30.0</updateRate>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>300</width>
+          <height>300</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.25</near>
+          <far>100</far>
+        </clip>
+      </camera>
+      <!-- http://gazebosim.org/tutorials/?tut=ros_depth_camera -->
+      <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+        <baseline>0.2</baseline>
+        <alwaysOn>true</alwaysOn>
+        <!-- Keep this zero, update_rate in the parent <sensor> tag
+            will control the frame rate. -->
+        <updateRate>0.0</updateRate>
+        <cameraName>camera_ir</cameraName>
+        <imageTopicName>/camera/color/image_raw</imageTopicName>
+        <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
+        <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
+        <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudTopicName>/point_cloud</pointCloudTopicName>
+        <frameName>kinect_optical_link</frameName>
+        <pointCloudCutoff>0.1</pointCloudCutoff>
+        <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+        <distortionK1>0</distortionK1>
+        <distortionK2>0</distortionK2>
+        <distortionK3>0</distortionK3>
+        <distortionT1>0</distortionT1>
+        <distortionT2>0</distortionT2>
+        <CxPrime>0</CxPrime>
+        <Cx>0</Cx>
+        <Cy>0</Cy>
+        <focalLength>0</focalLength>
+        <hackBaseline>0</hackBaseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</model>

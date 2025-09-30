@@ -1,0 +1,11 @@
+# Hardware related parameters
+# will be loaded onto the parameter server
+# See the bravo.launch
+bravo:
+  control_loop_rate: 100 # Hz to set ROSControl read()/write() rate
+  heartbeat_freq: 100 # Hz to read position (cast to uint8 in code)
+  gripper_current_lower_lim: -150 # should be negative, closing current limit (mA)
+  gripper_current_upper_lim: 200 # should be positive, opening current limit (mA)
+  debug:
+    hardware_interface: false
+    base_controller: true

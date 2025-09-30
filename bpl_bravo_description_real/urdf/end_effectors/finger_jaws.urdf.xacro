@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<robot name="bravo_finger_jaws" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="bravo_finger_jaws" params="parent *origin name:=bravo_finger_jaws axis_a">
+        <material name="${name}_black">
+            <color rgba="0.3 0.3 0.3 1" />
+        </material>
+        <joint name="${name}_joint" type="fixed">
+            <xacro:insert_block name="origin" />
+            <parent link="${parent}"/>
+            <child link="${name}_base_link" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </joint>
+
+        <link name="${name}_base_link">
+            <visual>
+                <geometry>
+                    <mesh filename="package://rsa_bravo_gazebo/meshes/end_effectors/RS2-257.stl"/>
+                </geometry>
+                <material name="${name}_black"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder length="0.02" radius="0.05"/>
+                </geometry>
+                <origin xyz="0.01 0 0.00" rpy="0 1.5707 0"/>
+            </collision>
+
+            <!-- Low mass for unimportant link -->
+            <inertial>
+                <mass value="0.01"/>
+                <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+            </inertial>
+
+        </link>
+
+        <!-- virtual link with different orientation for planning -->
+        <link name="ee_link"/>
+        <joint name="ee_link_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+            <parent link="${name}_base_link"/>
+            <child link="ee_link"/>
+        </joint>
+
+        <link name="${name}_rs2_300_link">
+            <visual>
+                <geometry>
+                    <mesh filename="package://rsa_bravo_gazebo/meshes/end_effectors/RS2-300.stl"/>
+                </geometry>
+                <material name="${name}_black"/>
+
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="package://rsa_bravo_gazebo/meshes/end_effectors/RS2-300.stl"/>
+                </geometry>
+                <!-- <geometry>
+                    <box size="0.14 0.04 0.045"/>
+                </geometry>
+                <origin xyz="0.07 0.025 0.00" rpy="0 0 0.35"/> -->
+            </collision>
+
+            <!-- copied from link 6 of the datasheet, which includes BOTH fingers, so I cut the mass in half. The inertia tensor probably might be good to within an order of magnitude. -->
+            <inertial>
+                <mass value="0.24" />
+                <origin xyz="0.05 0.0 0" />
+                <inertia
+                ixx="${244 * 1e-6}"
+                ixy="${-12 * 1e-6}"
+                ixz="${0 * 1e-6}"
+                iyy="${1130 * 1e-6}"
+                iyz="${1 * 1e-6}"
+                izz="${1178 * 1e-6}"
+                />
+            </inertial>
+
+        </link>
+
+        <joint name="${name}_rs2_300_joint" type="revolute">
+            <origin xyz="0.0097 -0.033 0" rpy="0 0 0"/>
+            <parent link="${name}_base_link"/>
+            <child link="${name}_rs2_300_link"/>
+            <axis xyz="0 0 -1"/>
+            <limit lower="0" upper="1.0" effort="400" velocity="3"/>
+            <mimic joint="${axis_a}" multiplier="18" offset="0"/>
+        </joint>
+
+        <link name="${name}_rs2_301_link">
+            <visual>
+                <geometry>
+                    <mesh filename="package://rsa_bravo_gazebo/meshes/end_effectors/RS2-301.stl"/>
+                </geometry>
+                <material name="${name}_black"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="package://rsa_bravo_gazebo/meshes/end_effectors/RS2-301.stl"/>
+                </geometry>
+                <!-- <geometry>
+                    <box size="0.14 0.04 0.045"/>
+                </geometry>
+                <origin xyz="0.07 -0.025 0.00" rpy="0 0 -0.35"/> -->
+            </collision>
+
+            <!-- copied from link 6 of the datasheet, which includes BOTH fingers, so I cut the mass in half. The inertia tensor probably might be good to within an order of magnitude. -->
+            <inertial>
+                <mass value="0.24" />
+                <origin xyz="0.05 0.0 0" />
+                <inertia
+                ixx="${244 * 1e-6}"
+                ixy="${-12 * 1e-6}"
+                ixz="${0 * 1e-6}"
+                iyy="${1130 * 1e-6}"
+                iyz="${1 * 1e-6}"
+                izz="${1178 * 1e-6}"
+                />
+            </inertial>
+        </link>
+
+        <joint name="${name}_rs2_301_joint" type="revolute">
+            <origin xyz="0.0097 0.033 0" rpy="0 0 0"/>
+            <parent link="${name}_base_link"/>
+            <child link="${name}_rs2_301_link"/>
+            <axis xyz="0 0 1"/>
+            <limit lower="0" upper="1.0" effort="400" velocity="3"/>
+            <mimic joint="${name}_rs2_300_joint" multiplier="1" offset="0"/>
+        </joint>
+    </xacro:macro>
+</robot>

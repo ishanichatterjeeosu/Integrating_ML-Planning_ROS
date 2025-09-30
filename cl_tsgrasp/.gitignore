@@ -1,0 +1,14 @@
+*.pdf
+*.vscode
+*/build/*
+*/devel/*
+*/install/*
+*/log/*
+.catkin_workspace
+frames.gv
+*.tar
+*/logs/*
+*.catkin_tools
+*.ckpt
+*.pyc
+config/machine_setup.bash
