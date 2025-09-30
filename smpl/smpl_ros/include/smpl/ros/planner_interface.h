@@ -188,28 +188,7 @@ protected:
 
     void postProcessPath(std::vector<RobotState>& path) const;
 
-private:
-
-    ros::NodeHandle m_nh;
-    ros::ServiceClient m_neural_net_client;
     
-    // Helper function to create grasp poses
-    Eigen::Isometry3d computeTopGraspPose(const Eigen::Isometry3d& object_pose);
-    Eigen::Isometry3d computeHorizontalGraspPose(const Eigen::Isometry3d& object_pose);
-    
-    // Helper to format data as CSV string
-    std::string formatGraspDataAsCSV(
-        const Eigen::Isometry3d& object_pose,
-        const Eigen::Isometry3d& gripper_pose,
-        const RobotState& start_state,
-        const std::string& grasp_type);
-    // ... existing members ...
-    ros::Subscriber m_object_pose_sub;
-    Eigen::Isometry3d m_latest_object_pose;
-    bool m_object_pose_received;
-    std::mutex m_object_pose_mutex;
-    
-    void objectPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
 };
 
 } // namespace smpl
