@@ -1,0 +1,19 @@
+<launch>
+<!-- launch file to calibrate realsense camera -->
+    <include file="$(find hacky_utils)/launch/realsense_start.launch">
+    </include>
+
+    <include file="$(find bravo_arm_sw)/launch/bravo_arm.launch">
+        <arg name="simulated" value="false"/> 
+        <arg name="start_rviz" value="false"/> 
+    </include>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_link_broadcaster"
+      args="0.154 0.055 0.025 0 0 0 1 left camera_depth_optical_frame" />
+
+    <node pkg="hacky_utils" type="publish_tf_from_topic.py" name="tf_pub" output="screen" />
+
+
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find hacky_utils)/config/rviz.rviz" />
+
+</launch>

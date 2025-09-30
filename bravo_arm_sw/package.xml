@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>bravo_arm_sw</name>
+  <version>0.0.0</version>
+  <description>Top-level repo for Bravo arm software</description>
+
+  <maintainer email="playert@oregonstate.edu">Tim Player</maintainer>
+
+  <license>BSD</license>
+
+  <!-- <url type="website">http://wiki.ros.org/testbed_msgs</url> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>teleop_twist_joy</exec_depend>
+  <exec_depend>xterm</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
+
+</package>

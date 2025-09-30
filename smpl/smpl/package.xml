@@ -1,0 +1,21 @@
+<package format="2">
+    <name>smpl</name>
+    <version>0.0.0</version>
+    <description>The Search-Based Motion Planning Library</description>
+    <author email="bcohen@seas.upenn.edu">Benjamin Cohen</author>
+    <author email="andrew.dornbush@gmail.com">Andrew Dornbush</author>
+    <author>Harsh Pandey</author>
+    <maintainer email="andrew.dornbush@gmail.com">Andrew Dornbush</maintainer>
+    <license>BSD</license>
+
+    <buildtool_depend>cmake</buildtool_depend>
+
+    <depend>boost</depend>
+    <depend>eigen</depend>
+    <depend>roscpp</depend>
+    <depend>visualization_msgs</depend>
+
+    <export>
+        <build_type>cmake</build_type>
+    </export>
+</package>

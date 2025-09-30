@@ -1,0 +1,31 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/rsa/testbed/tim_grasp_ws/devel/include/**",
+        "/home/rsa/testbed/nanotec_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/rsa/testbed/tim_grasp_ws/src/bpl_bravo_moveit_config/bravo_7_example_arm_ikfast_plugin/include/**",
+        "/home/rsa/testbed/tim_grasp_ws/src/libbpl_protocol/include/**",
+        "/home/rsa/testbed/nanotec_ws/src/libcubemars_can/include/**",
+        "/home/rsa/testbed/nanotec_ws/src/libnanotec_pdi/include/**",
+        "/home/rsa/testbed/tim_grasp_ws/src/mocap-docker/deps/motion_capture_system/mocap_base/include/**",
+        "/home/rsa/testbed/tim_grasp_ws/src/mocap-docker/deps/motion_capture_system/mocap_qualisys/include/**",
+        "/home/rsa/testbed/tim_grasp_ws/src/mocap-docker/deps/motion_capture_system/mocap_vicon/include/**",
+        "/home/rsa/testbed/tim_grasp_ws/src/rsa_bravo_driver/include/**",
+        "/home/rsa/testbed/nanotec_ws/src/testbed_hw/testbed_driver/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

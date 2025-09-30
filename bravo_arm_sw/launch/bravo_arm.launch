@@ -1,0 +1,183 @@
+<!-- A top-level launch file to start the RobotHW interface, MoveIt, MoveIt Servo, and RViz -->
+
+<launch>
+
+    <arg name="simulated"
+        default="true"
+        doc="Whether to start in Gazebo or in real life." />
+
+    <arg name="use_controller"
+        default="true"
+        doc="Whether to start a teleop_twist_joy node to accept joystick input." />
+
+    <arg name="with_camera"
+        default="false"
+        doc="Whether to include a wrist-mounted depth camera in the URDF."
+    />
+
+    <arg name="with_force_torque_sensor"
+        default="true"
+        doc="Whether to include a FT sensor link."
+    />
+
+    <arg name="with_trisect"
+        default="true"
+        doc="Whether to include the Trisect camera."
+    />
+    
+    <arg name="start_rviz"
+        default="true"
+        doc="Whether to start an rviz visualization window."
+    />
+
+    <!-- Load the URDF onto the parameter server -->
+    <param name="bravo/robot_description" 
+        command="xacro '$(find bpl_bravo_description_real)/urdf/bravo_7_example.urdf.xacro' with_camera:=$(arg with_camera) with_trisect:=$(arg with_trisect) with_force_torque_sensor:=$(arg with_force_torque_sensor)"/>
+    
+    <!-- Real Bravo - - not Gazebo -->
+    <group if="$(eval arg('simulated') == false)">
+        <!-- Load driver config to the parameter server -->
+        <rosparam command="load" 
+            file="$(find rsa_bravo_driver)/config/bravo.yaml"/>
+
+        <node name="rsa_bravo_driver" pkg="rsa_bravo_driver" type="rsa_bravo_driver"
+            ns="bravo" output="screen" launch-prefix="xterm -hold -e"/>
+
+        <!-- Load controller config to the parameter server -->
+        <rosparam command="load" 
+            file="$(find rsa_bravo_driver)/config/bravo_control.yaml"/>
+
+        <!-- Spawn controllers using the rsa_bravo_driver RobotHW interface-->
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+            output="screen" 
+            ns="bravo"
+            args="joint_state_controller arm_position_controller hand_position_controller"
+            />
+
+        <!-- Start a real depth cam node -->
+        <group if="$(eval arg('with_camera') == true)">
+            <remap from="/camera/depth/color/points" to="/camera/depth/points"/>
+            <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+                <arg name="enable_pointcloud" value="true" />
+                <arg name="output" value="log" />
+            </include>
+
+            <!-- Publish the camera pose transform obtained from MoveIt Calibration -->
+            <include file="$(find bravo_arm_sw)/launch/cam_pose.launch" />
+        </group>
+
+    </group>
+
+    <!-- Simulated Bravo in Gazebo -->
+    <group if="$(eval arg('simulated') == true)">
+
+        <arg name="initial_joint_positions"
+            doc="Initial joint configuration of the panda. Specify as a list of name/value pairs in form of '-J [name-of-joint] [value-in-rad]'. Default is a 90 degree bend in the elbow"
+                default="   -J bravo_axis_a 0
+                        -J bravo_axis_b 1.4628105783613177
+                        -J bravo_axis_c 0.678094702646315
+                        -J bravo_axis_d 0.6038382476505441
+                        -J bravo_axis_e 2.9017488775645752
+                        -J bravo_axis_f 1.2216614195558464
+                        -J bravo_axis_g 1.7748839222681299" />
+        
+            <!-- default="   -J bravo_axis_a 0
+                        -J bravo_axis_b 0.475813
+                        -J bravo_axis_c 1.55793
+                        -J bravo_axis_d 2.36473
+                        -J bravo_axis_e 1.4357
+                        -J bravo_axis_f 2.38372
+                        -J bravo_axis_g 3.76252" />  -->
+            <!--   default="   -J bravo_axis_a 0
+                        -J bravo_axis_b 0.9309472824645938 
+                        -J bravo_axis_c 0.24975589351436916
+                        -J bravo_axis_d -0.04102865689033303
+                        -J bravo_axis_e 3.1614536962511
+                        -J bravo_axis_f 1.3116306338563772
+                        -J bravo_axis_g 3.131957434137479" />   -->
+     
+
+        <!-- Launch Gazebo-->
+        <include file="$(find gazebo_ros)/launch/empty_world.launch">
+            <arg name="gui" value="true" />
+            <arg name="paused" value="true"/>
+            <arg name="debug" value="false"/>
+            <arg name="verbose" value="false"/>
+        </include>
+
+        <!-- Spawn the robot model -->
+        <node name="bravo_model_spawner" 
+            pkg="gazebo_ros" type="spawn_model" 
+            args="-param bravo/robot_description -urdf -model bravo_7_example -unpause $(arg initial_joint_positions)" />
+
+        <!-- Load the roscontrol pids onto the parameter server -->
+        <rosparam file="$(find rsa_bravo_gazebo)/config/ros_controllers.yaml" 
+            command="load" />
+
+        <!-- Load the controllers -->
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+            output="screen" 
+            ns="bravo"
+            args="joint_state_controller arm_position_controller hand_position_controller"
+            />
+
+    </group>
+
+    <!-- Copy the ROS /joint_states topic to tf for visualization -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        ns="bravo" 
+        respawn="true" 
+        output="screen"
+        />
+
+    <!-- Set up MoveIt planning scene and trajectory execution -->
+    <include ns="bravo" file="$(find bpl_bravo_moveit_config)/launch/move_group.launch">
+        <arg name="load_robot_description" value="false" />
+    </include>
+
+    <!-- Start moveit_servo node for cartesian end-effector velocity control -->
+    <node ns="bravo" name="servo_server" pkg="moveit_servo" type="servo_server" output="screen" launch-prefix="xterm -hold -e " respawn="true">
+        <rosparam command="load" file="$(find bpl_bravo_moveit_config)/config/bravo_moveit_servo.yaml" />
+        <!-- Remap topics to move_group https://github.com/ros-planning/moveit/issues/3067 -->
+        <remap from="planning_scene_world" to="move_group/planning_scene_world"/>
+        <remap from="planning_scene" to="move_group/monitored_planning_scene"/>
+        <remap from="get_planning_scene" to="move_group/get_planning_scene"/>
+        <remap from="collision_object" to="move_group/collision_object"/>
+        <remap from="attached_collision_object" to="move_group/attached_collision_object"/>
+    </node>
+
+    <!-- Optionally start a teleop_twist_joy node for a game controller -->
+    <group if="$(eval arg('use_controller'))">
+    
+        <include file="$(find teleop_twist_joy)/launch/teleop.launch">
+            <arg name="config_filepath" value="$(find bpl_bravo_moveit_config)/config/xbox_controller.yaml" />
+        </include>
+
+        <!-- Turn twist message on teleop topic /cmd_vel into TwistStamped
+        for /servo_server/delta_twist_cmds-->
+        <node pkg="topic_tools" type="transform" name="twist_cmd_transformer"
+        args="/cmd_vel /bravo/servo_server/delta_twist_cmds geometry_msgs/TwistStamped
+            'geometry_msgs.msg.TwistStamped(
+                header=std_msgs.msg.Header(
+                    stamp=rospy.Time.now(),
+                    frame_id=&quot;ee_link&quot;),
+                twist=m
+            )' --import geometry_msgs rospy std_msgs --wait-for-start"/>
+
+        <!-- Start a node to control the gripper with the controller triggers -->
+        <node pkg="rsa_bravo_driver" type="joy_trigger_jaw.py" name="joy_trigger_jaw" 
+            output="screen" launch-prefix="xterm -hold -e "
+        />
+
+    </group>
+
+    <group if="$(eval arg('start_rviz') == true)">
+        <!-- Start rviz for visualization -->
+        <node  pkg="rviz" type="rviz" output="screen" name="rviz" 
+            args="-d $(find bravo_arm_sw)/config/bravo.rviz" ns="bravo"/>
+    </group>
+
+    <!-- Graphical slider to control joint positions for debugging-->
+    <!-- <node pkg="rqt_joint_trajectory_controller" type="rqt_joint_trajectory_controller" name="rqt_joint_trajectory_controller" ns="bravo"/> -->
+
+  </launch>

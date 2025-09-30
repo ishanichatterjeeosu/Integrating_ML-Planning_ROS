@@ -1,0 +1,25 @@
+repositories:
+  src/bpl_bravo_description_real:
+    type: git
+    url: https://gitlab.com/rsa-manipulation-testbed/bpl_bravo_description_real.git
+    version: main
+  src/bpl_bravo_moveit_config:
+    type: git
+    url: https://gitlab.com/rsa-manipulation-testbed/bpl_bravo_moveit_config.git
+    version: main
+  src/libbpl_protocol:
+    type: git
+    url: https://gitlab.com/rsa-manipulation-testbed/libbpl_protocol.git
+    version: main
+  src/rsa_bravo_driver:
+    type: git
+    url: https://gitlab.com/rsa-manipulation-testbed/rsa_bravo_driver.git
+    version: main
+  src/rsa_bravo_msgs:
+    type: git
+    url: https://gitlab.com/rsa-manipulation-testbed/rsa_bravo_msgs.git
+    version: main
+  src/rsa_bravo_gazebo:
+    type: git
+    url: https://gitlab.com/rsa-manipulation-testbed/rsa_bravo_gazebo.git
+    version: main
